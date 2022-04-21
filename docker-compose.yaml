@@ -1,0 +1,11 @@
+version: "3"
+services:
+  bodyposenet-tao-tool-kit:
+    container_name: bodyposenet-tao-tool-kit
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./:/app/src
+    working_dir: /app/src
+    tty: true
