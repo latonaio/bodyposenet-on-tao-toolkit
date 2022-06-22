@@ -29,4 +29,16 @@ tao-convert:
 本マイクロサービスで最適化された BodyPoseNet の AIモデルを Deep Stream 上で動作させる手順は、[bodyposenet-on-deepstream](https://github.com/latonaio/bodyposenet-on-deepstream)を参照してください。  
 
 ## engineファイルについて
-engineファイルである bodyposenet.engine は、[bodyposenet-on-deepstream](https://github.com/latonaio/bodyposenet-on-deepstream)と共通のファイルであり、本レポジトリで作成した engineファイルを、当該リポジトリで使用しています。  
+engineファイルである bodyposenet.engine は、[bodyposenet-on-deepstream](https://github.com/latonaio/bodyposenet-on-deepstream)と共通のファイルであり、本レポジトリで作成した engineファイルを、当該リポジトリで使用しています。 
+
+## 演算について
+本レポジトリでは、ニューラルネットワークのモデルにおいて、エッジコンピューティング環境での演算スループット効率を高めるため、FP16(半精度浮動小数点)を使用しています。  
+浮動小数点値の変更は、Makefileの以下の部分を変更し、engineファイルを生成してください。
+
+```
+	docker exec -it bodyposenet-tao-tool-kit tao-converter -k nvidia_tlt \
+	-p $(INPUT_NAME),1x$(INPUT_SHAPE),$(OPT_BATCH_SIZE)x$(INPUT_SHAPE),$(MAX_BATCH_SIZE)x$(INPUT_SHAPE) \
+	 -o heatmap_out/BiasAdd:0,conv2d_transpose_1/BiasAdd:0  -e /app/src/bodyposenet.engine -u 1  -m 8 -t fp16  /app/src/bodyposenet.etlt 
+```
+
+

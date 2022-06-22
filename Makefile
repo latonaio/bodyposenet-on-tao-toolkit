@@ -12,19 +12,19 @@ tao-docker-build: ## TAO用コンテナをビルド
 
 
 # Set dimensions of desired output model for inference/deployment
-INPUT_SHAPE := 224x320x3
+INPUT_SHAPE := 288x384x3
 OPT_SHAPE := 240x340x3
 MAX_SHAPE := 288x400x3
 # Set input name
 INPUT_NAME := input_1:0
 # Set opt profile shapes
-MAX_BATCH_SIZE := 1
-OPT_BATCH_SIZE := 1
+MAX_BATCH_SIZE := 32
+OPT_BATCH_SIZE := 32
 tao-convert:
 	docker exec -it bodyposenet-tao-tool-kit tao-converter -k nvidia_tlt \
 	-p $(INPUT_NAME),1x$(INPUT_SHAPE),$(OPT_BATCH_SIZE)x$(INPUT_SHAPE),$(MAX_BATCH_SIZE)x$(INPUT_SHAPE) \
-	 -o heatmap_out/BiasAdd:0,conv2d_transpose_1/BiasAdd:0  -e /app/src/bodyposenet.engine -u 1  -m 32 -t fp16  /app/src/bodyposenet.etlt 
-	cp bodyposenet.engine ../bodyposenet-on-deepstream/
+	 -o heatmap_out/BiasAdd:0,conv2d_transpose_1/BiasAdd:0  -e /app/src/bodyposenet.engine -u 1  -m 8 -t fp16  /app/src/bodyposenet.etlt 
+#	cp bodyposenet.engine ../bodyposenet-on-deepstream/
 tao-docker-login: ## TAO用コンテナにログイン
 	docker exec -it bodyposenet-tao-tool-kit bash
 
